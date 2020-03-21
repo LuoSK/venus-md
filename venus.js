@@ -1,13 +1,11 @@
 function Venus(source, id) {
   var token = parser(source.trim().split("\n")); //将源文件解析成一个token流
-
   render(token, id); // 将获取到的token流渲染成html
 }
 function parser(source) {
-  var rule = new Rules(); // 生成规则对象
   var strArr = source; // 按行分割存入数组
   var token = ""; // 存储解析后的token 流
-  //
+  var rule = new Rules(); // 生成规则对象
   var readIndex = 0; // 当前指针指向行数
   var length = strArr.length; // 行数
 
@@ -149,7 +147,7 @@ function parser(source) {
         ) {
           break;
         }
-        if (line == "") {
+        if (curLine == "") {
           readIndex + 1;
           break;
         }
@@ -164,45 +162,119 @@ function parser(source) {
       continue;
     }
 
-    // 列表项
-    if (rule.blockquote.test(line)) {
+    // 无序列表项
+    if (rule.ul.test(line)) {
       var tempArr = [];
-      tempArr.push(line.replace(/>/, ""));
+      token += "<ul>";
+      tempArr.push(line.replace(/[-+*]\s/, ""));
       // 指针下潜
       while (readIndex + 1 < length) {
         var curLine = strArr[readIndex + 1];
-        // 寻找中断代码块
-        if (
-          rule.fenceStart.test(curLine) ||
-          rule.heading.test(curLine) ||
-          rule.linkdefinedStart.test(curLine) ||
-          rule.hr.test(curLine)
-        ) {
+        //寻找中断代码块
+        if (rule.ol.test(curLine)) {
           break;
         }
-        if (line == "") {
-          readIndex + 1;
-          break;
+        if (curLine == "") {
+          if (!rule.ul.test(strArr[readIndex + 2])) {
+            readIndex + 1;
+            break;
+          }
         }
-        // 去除 “>” 将当前行存入数组
-        var tempLine = /^\s*>?(.*)/.exec(curLine)[1];
+        if (rule.ul.test(curLine)) {
+          var tempStr = parser(tempArr);
+          token += `<li>${tempStr}</li>`;
+          tempArr = [];
+        }
+        // 去除 “*-+” 将当前行存入数组
+        var tempLine = /^\s*([-+*]\s)?(.*)/.exec(curLine)[2];
         tempArr.push(tempLine);
         readIndex++;
       }
-      var tempStr = parser(tempArr);
-      token += `<blockquote>${tempStr}</blockquote>`;
+      if (tempArr) {
+        var tempStr = parser(tempArr);
+        token += `<li>${tempStr}</li>`;
+      }
+      token += `</ul>`;
+      readIndex++;
+      continue;
+    }
+    // 有序列表项
+    if (rule.ol.test(line)) {
+      var tempArr = [];
+      var start = parseInt(rule.ol.exec(line)[1]);
+      token += `<ol start='${start}'>`;
+      tempArr.push(line.replace(/[0-9]+\. /, ""));
+      // 指针下潜
+      while (readIndex + 1 < length) {
+        var curLine = strArr[readIndex + 1];
+        //寻找中断代码块
+        if (rule.ul.test(curLine)) {
+          break;
+        }
+        if (curLine == "") {
+          if (!rule.ol.test(strArr[readIndex + 2])) {
+            readIndex + 1;
+            break;
+          }
+        }
+        if (rule.ol.test(curLine)) {
+          var tempStr = parser(tempArr);
+          token += `<li>${tempStr}</li>`;
+          tempArr = [];
+        }
+        // 去除 数字 将当前行存入数组
+        var tempLine = /^\s{0,3}([0-9]+\. )?(.*)/.exec(curLine)[2];
+        tempArr.push(tempLine);
+        readIndex++;
+      }
+      if (tempArr) {
+        var tempStr = parser(tempArr);
+        token += `<li>${tempStr}</li>`;
+      }
+      token += `</ol>`;
       readIndex++;
       continue;
     }
 
     // 段落处理
-    token += `<p>${line.trim()}</p>`;
+    token += `<p>${inlineParser(line.trim())}</p>`;
     readIndex++;
   }
   console.log(token);
   return token;
 }
-function inlineParser(inlineSource) {}
+// 内联元素解析
+function inlineParser(p) {
+  var rule = new Rules(); // 生成规则对象
+  if (rule.inlineCode.test(p)) {
+    p = p.replace(rule.inlineCode, function($0, $1, $2) {
+      return `<code>${$2}</code>`;
+    });
+  }
+  //
+  if (rule.strong.test(p)) {
+    p = p.replace(rule.strong, function($0, $1, $2) {
+      if ($1.length == 1) {
+        return `<em>${$2}</em>`;
+      }
+      if ($1.length == 2) {
+        return `<strong>${$2}</strong>`;
+      }
+      if ($1.length >= 3) {
+        return `<strong><em>${$2}</em></strong>`;
+      }
+    });
+  }
+  //
+  if (rule.delete.test(p)) {
+    p = p.replace(rule.delete, function($0, $1) {
+      return `<delete>${$1}</delete>`;
+    });
+  }
+  return p;
+}
+
+// 将token渲染到制定的标签中
 function render(token, id) {
   var renderDiv = document.querySelector(`#${id}`);
   renderDiv.innerHTML = token;
@@ -234,13 +306,15 @@ function Rules() {
 
   this.ul = /^\s{0,3}[-+*]\s(.*)/; // 无序列表
 
-  this.ol = //; // 有序列表
-    // 内联元素规则
-    this.inlineCode = /(`+)(.*)\1/; // `code`
+  this.ol = /^\s{0,3}([0-9]+)\. (.*)/; // 有序列表
 
-  this.strong = /([*_]{1,3})(.*)(\1)/; // *strong* _strong_
+  // 内联元素规则
 
-  this.delete = /~~(.*)~~/; // ~~delete~~
+  this.inlineCode = /(`+)(.*)(\1)/g; // `code`
+
+  this.strong = /([*_]{1,3})(.*)(\1)/g; // *strong* _strong_
+
+  this.delete = /~~(.*)~~/g; // ~~delete~~
 }
 
 // 转义字符处理

@@ -1,12 +1,56 @@
 <style>
+  #markdown {
+    padding: 20px 20px;
+    width: 700px;
+    border: 1px solid black;
+  }
+
+  #markdown a {
+    color: #0681d0
+  }
+
   #markdown pre {
-    background-color: pink;
+    background-color: #202330;
+    color: aliceblue;
+    border-radius: 4px;
+    padding: 1em;
+    line-height: 1.5;
+    font-size: 12px;
+    padding-left: 20px;
+
+
+  }
+
+  #markdown pre p {
+    margin: 0;
   }
 
   #markdown blockquote {
     margin: 0;
+    margin-left: 10px;
     padding-left: 10px;
-    border-left: 4px solid gold;
+    border-left: 4px solid #ccc;
+  }
+
+  #markdown p code {
+    background-color: #f2f2f2;
+    color: #c7254e;
+    margin: 0 4px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-size: 14px;
+  }
+
+  #markdown p strong {
+    margin: 2px 4px;
+  }
+
+  #markdown p em {
+    margin: 2px 4px;
+  }
+
+  #markdown p strong em {
+    margin: 0
   }
 </style>
 
@@ -14,11 +58,12 @@
   <div id='markdown'></div>
   <script src='./mdreader.js'></script>
   <script src="./venus.js"></script>
-
+  <link rel="stylesheet" href="highlights.css">
   <script>
     mdreader("test.md").then(res => {
       Venus(res, 'markdown');
     });
   </script>
-  <link rel="stylesheet" href="style.css">
+  <script src='./highlights.js'></script>
+
 </body>

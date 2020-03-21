@@ -1,50 +1,37 @@
-function Venus(mdSource) {
-  var token = parser(mdSource); //将源文件解析成一个token流
-
-  var result = render(token); // 将获取到的token流渲染成html
-  return result;
-}
-
-function parser(source) {
-  var rule = new Rules();
-
-  var strArr = source.split("\n");
-
-  var readIndex = 0;
-  var length = strArr.length;
-  while (readIndex < length) {
-    var line = strArr[readIndex];
-    console.log(line)
-    if (rule.newline.exec(line)) {
-      readIndex++;
-      continue;
+// 有序列表项
+if (rule.ol.test(line)) {
+  var tempArr = [];
+  var start = parseInt(rule.ol.exec(line)[2]);
+  token += `<ol start='${start}'>`;
+  tempArr.push(line.replace(/[0-9]+\. /, ""));
+  // 指针下潜
+  while (readIndex + 1 < length) {
+    var curLine = strArr[readIndex + 1];
+    //寻找中断代码块
+    if (rule.ul.test(curLine)) {
+      break;
     }
-    if (rule.heading.exec(line)) {
-      console.log(rule.heading.exec(line)[2])
-      readIndex++;
-      continue;
+    if (curLine == "") {
+      if (!rule.ol.test(strArr[readIndex + 2])) {
+        readIndex + 1;
+        break;
+      }
     }
-    if (rule.hr.test(line)) {
-      console.log(rule.hr.test(line))
-      readIndex++;
-      continue;
+    if (rule.ol.test(curLine)) {
+      var tempStr = parser(tempArr);
+      token += `<li>${tempStr}</li>`;
+      tempArr = [];
     }
+    // 去除 数字 将当前行存入数组
+    var tempLine = /^\s{0,3}([0-9]+\. )?(.*)/.exec(curLine)[2];
+    tempArr.push(tempLine);
     readIndex++;
   }
-}
-function render() {}
-function Rules() {
-  // markdown 正则匹配规则
-  this.newline = /^\n+/m; // 空行
-
-  this.hr = /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/m; // 分隔符 --- *** ___
-
-  this.heading = /^ {0,3}(#{1,6}) +([^\n]*?)(?: +#+)? *(\n|$)/m; // ATX 标题 ######
-
-  this.code = /^(\s{4}[^\n]+\n*)+/m; // 缩进代码块
-
-  this.fence = /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n([\s\S]*?\n)(?: {0,3}\1[`~]* *(?:\n+|$)|$)/m; // 围栏代码块
-
-  this.lheading = /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/m; // Setext 标题 === ---
-  // var lheading = /^ {0,3}((?:[*-+][^ ].*)|[^*-+ ].*)\n {0,3}(=+|-+) *(\n|$)/m; // Setext 标题 === ---
+  if (tempArr) {
+    var tempStr = parser(tempArr);
+    token += `<li>${tempStr}</li>`;
+  }
+  token += `</ol>`;
+  readIndex++;
+  continue;
 }
