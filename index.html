@@ -1,0 +1,24 @@
+<style>
+  #markdown pre {
+    background-color: pink;
+  }
+
+  #markdown blockquote {
+    margin: 0;
+    padding-left: 10px;
+    border-left: 4px solid gold;
+  }
+</style>
+
+<body>
+  <div id='markdown'></div>
+  <script src='./mdreader.js'></script>
+  <script src="./venus.js"></script>
+
+  <script>
+    mdreader("test.md").then(res => {
+      Venus(res, 'markdown');
+    });
+  </script>
+  <link rel="stylesheet" href="style.css">
+</body>
