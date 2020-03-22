@@ -334,11 +334,11 @@ function Rules() {
 
   // 内联元素规则
 
-  this.inlineCode = /(`+)(.*)(\1)/g; // `code`
+  this.inlineCode = /(`+)(.*?)(\1)/g; // `code`
 
-  this.strong = /([*_]{1,3})(.*)(\1)/g; // *strong* _strong_
+  this.strong = /([*_]{1,3})(.*?)(\1)/g; // *strong* _strong_
 
-  this.delete = /~~(.*)~~/g; // ~~delete~~
+  this.delete = /~~(.*?)~~/g; // ~~delete~~
 
   this.inlinelink = /\[(.*?)\]\(\s*(<\S*>|\S*)(?:(?:\s+('.*'|".*"|\(.*\))\s*)|\s*)\)/g; // 行内链接
 
