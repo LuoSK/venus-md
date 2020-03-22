@@ -249,7 +249,7 @@ function inlineParser(p) {
   // 行内代码
   if (rule.inlineCode.test(p)) {
     p = p.replace(rule.inlineCode, function($0, $1, $2) {
-      return `<code>${$2}</code>`;
+      return `<code>${ESC($2)}</code>`;
     });
   }
   // 加粗 斜体
