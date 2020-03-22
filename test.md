@@ -1,24 +1,25 @@
-```js
-if (rule.linkdefinedClose.test(line)) {
-  var tag = rule.linkdefinedClose.exec(line);
-  var tempIndex = readIndex;
-  //指针上潜
-  while (tempIndex - 1 >= 0) {
-    var curLine = rule.linkdefinedStart.exec(strArr[tempIndex - 1]);
-    if (curLine) {
-      if (tag[1] == curLine[1]) {
-        var href = curLine[2].trim();
-        var title = curLine[3].trim();
-        tempStr = `<p><a href='${href}' title='${title}'>${tag[1]}</a>${tag[2]}</p>`;
-        token += tempStr;
-        break;
-      }
-    }
-    tempIndex--;
+```javascript
+function $initHighlight(block, cls) {
+  try {
+    if (cls.search(/\bno\-highlight\b/) != -1)
+      return process(block, true, 0x0F) +
+             ` class="${cls}"`;
+  } catch (e) {
+    /* handle exception */
   }
-  readIndex++;
-  continue;
+  for (var i = 0 / 2; i < classes.length; i++) {
+    if (checkCondition(classes[i]) === undefined)
+      console.log('undefined');
+  }
+
+  return (
+    <div>
+      <web-component>{block}</web-component>
+    </div>
+  )
 }
+
+export  $initHighlight;
 ```
 
 112
@@ -56,15 +57,20 @@ hello this is foo
   dsdas
   ```
 
-```
+7.  first
+    aaaaa
+    bbbb
+    cccc
+8.  second
+    d`这里是行内代码`d
+    asdasda **strong** asdasd
+    asdasd *em* asdasdas
+    asdasdasd ~~ssads~~ dasd
 
-7. first
-aaaaa
-bbbb
-cccc
-3. second
-d`这里是行内代码`d
-asdasda**strong**asdasd
-asdasd*em*asdasdas
-asdasdasd***strong&em***asdasdasd
-```
+        aasdasd
+        asdasdas
+        asdasdas
+        asdasd
+
+[行内链接](#2)
+![img](/images/logo.png)

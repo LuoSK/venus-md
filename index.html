@@ -1,69 +1,26 @@
-<style>
-  #markdown {
-    padding: 20px 20px;
-    width: 700px;
-    border: 1px solid black;
-  }
+<html lang="zh-cn">
+<title>Venus Demo</title>
 
-  #markdown a {
-    color: #0681d0
-  }
-
-  #markdown pre {
-    background-color: #202330;
-    color: aliceblue;
-    border-radius: 4px;
-    padding: 1em;
-    line-height: 1.5;
-    font-size: 12px;
-    padding-left: 20px;
-
-
-  }
-
-  #markdown pre p {
-    margin: 0;
-  }
-
-  #markdown blockquote {
-    margin: 0;
-    margin-left: 10px;
-    padding-left: 10px;
-    border-left: 4px solid #ccc;
-  }
-
-  #markdown p code {
-    background-color: #f2f2f2;
-    color: #c7254e;
-    margin: 0 4px;
-    padding: 2px 4px;
-    border-radius: 2px;
-    font-size: 14px;
-  }
-
-  #markdown p strong {
-    margin: 2px 4px;
-  }
-
-  #markdown p em {
-    margin: 2px 4px;
-  }
-
-  #markdown p strong em {
-    margin: 0
-  }
-</style>
+<head>
+  <link rel="stylesheet" href="./markdown.css">
+  <link rel="stylesheet" href="./styles/paraiso-dark.css">
+</head>
 
 <body>
   <div id='markdown'></div>
   <script src='./mdreader.js'></script>
   <script src="./venus.js"></script>
-  <link rel="stylesheet" href="highlights.css">
   <script>
-    mdreader("test.md").then(res => {
+    mdreader("README.md").then(res => {
       Venus(res, 'markdown');
     });
+    window.onload = function () {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+      });
+    }
   </script>
-  <script src='./highlights.js'></script>
-
+  <script src="./highlight.pack.js"></script>
 </body>
+
+</html>
