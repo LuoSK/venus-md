@@ -1,5 +1,4 @@
-我的另一个项目 [planet](https://luosk.github.io/planet/index.html) 工作台需要实现 markdown 文档的渲染,因此参考 [gfm](https://gfm.docschina.org/zh-hans/) 规范实现了一个 markdown 的解析库，取名 
-`Venus`点这里直接看 [Demo](https://luosk.github.io/venus-md/index.html)
+我的另一个项目 [planet](https://luosk.github.io/planet/index.html) 工作台需要实现 markdown 文档的渲染,因此参考 [gfm](https://gfm.docschina.org/zh-hans/) 规范实现了一个 markdown 的解析库，取名`Venus`点这里直接看 [Demo](https://luosk.github.io/venus-md/index.html)
 
 ### 基础使用方式
 
