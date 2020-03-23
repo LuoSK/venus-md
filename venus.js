@@ -240,7 +240,7 @@ function parser(source) {
     token += `<p>${inlineParser(line.trim())}</p>`;
     readIndex++;
   }
-  // console.log(token);  
+  // console.log(token);
   return token;
 }
 // 内联元素解析
@@ -302,6 +302,9 @@ function inlineParser(p) {
 function render(token, id) {
   var renderDiv = document.querySelector(`#${id}`);
   renderDiv.innerHTML = token;
+  document.querySelectorAll("pre code").forEach(block => {
+    hljs.highlightBlock(block);
+  });
 }
 
 // markdown 正则匹配规则
